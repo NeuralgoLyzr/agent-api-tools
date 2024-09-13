@@ -1,25 +1,13 @@
-from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel
+from fastapi import APIRouter, HTTPException
+from .models import NotionPageRequest
+import asana
+from .config import ASANA_KEY, NOTION_API_KEY
 import requests
 import json
-import os
-from dotenv import load_dotenv
 
-load_dotenv()
+router = APIRouter()
+client = asana.Client.access_token(ASANA_KEY)
 
-api_key = os.getenv('NOTION_API_KEY')
-
-app = FastAPI(
-    title="Notion Page Creator API",
-    description="A simple API for creating Notion pages.",
-    version="1.0.0",
-)
-
-
-class NotionPageRequest(BaseModel):
-    notion_parent_page_id: str
-    title: str
-    content: str
 
 
 def create_notion_page(notion_api_key, notion_parent_page_id, title, content):
@@ -67,11 +55,11 @@ def create_notion_page(notion_api_key, notion_parent_page_id, title, content):
         raise HTTPException(status_code=response.status_code, detail=response.text)
 
 
-@app.post("/create-notion-page/")
+@router.post("/create-notion-page/")
 async def create_page(request: NotionPageRequest):
     try:
         response = create_notion_page(
-            notion_api_key=api_key,
+            notion_api_key=NOTION_API_KEY,
             notion_parent_page_id=request.notion_parent_page_id,
             title=request.title,
             content=request.content
@@ -79,5 +67,3 @@ async def create_page(request: NotionPageRequest):
         return {"status": "success", "data": response}
     except HTTPException as e:
         raise HTTPException(status_code=e.status_code, detail=e.detail)
-
-
