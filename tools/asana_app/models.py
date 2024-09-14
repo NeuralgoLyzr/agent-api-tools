@@ -1,6 +1,7 @@
 from pydantic import BaseModel
 
 class TaskCreateRequest(BaseModel):
+    pat_token: str
     workspace_id: str
     project_id: str
     name: str
@@ -10,6 +11,7 @@ class TaskCreateRequest(BaseModel):
     due_on: str
 
 class ProjectCreateRequest(BaseModel):
+    pat_token: str
     workspace_id: str
     name: str
     notes: str
@@ -17,9 +19,11 @@ class ProjectCreateRequest(BaseModel):
     due_on: str
 
 class TaskUpdateRequest(BaseModel):
+    pat_token:str
     task_id: str
 
 class CustomFieldCreateRequest(BaseModel):
+    pat_token: str
     workspace_id: str
     project_id: str
     name: str

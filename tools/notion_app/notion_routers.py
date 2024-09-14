@@ -1,13 +1,10 @@
 from fastapi import APIRouter, HTTPException
 from .models import NotionPageRequest
-import asana
-from .config import ASANA_KEY, NOTION_API_KEY
+from .config import NOTION_API_KEY
 import requests
 import json
 
 router = APIRouter()
-client = asana.Client.access_token(ASANA_KEY)
-
 
 
 def create_notion_page(notion_api_key, notion_parent_page_id, title, content):
@@ -59,7 +56,7 @@ def create_notion_page(notion_api_key, notion_parent_page_id, title, content):
 async def create_page(request: NotionPageRequest):
     try:
         response = create_notion_page(
-            notion_api_key=NOTION_API_KEY,
+            notion_api_key=request.notion_api_key,
             notion_parent_page_id=request.notion_parent_page_id,
             title=request.title,
             content=request.content
