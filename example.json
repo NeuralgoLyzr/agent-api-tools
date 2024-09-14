@@ -1,0 +1,150 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Asana API",
+    "description": "API for creating tasks in Asana",
+    "version": "0.1.0"
+  },
+  "servers": [
+    {
+      "url": "https://tools-server.lyzr.app",
+      "description": "Lyzr tools server"
+    }
+  ],
+  "paths": {
+    "/asana/create-task": {
+      "post": {
+        "tags": ["Asana"],
+        "summary": "Create Task",
+        "description": "This endpoint allows you to create a task in an Asana workspace. You must provide the required task details, such as the workspace, project, name, and assignee, as well as a valid PAT token.",
+        "operationId": "create_task_asana_create_task_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TaskCreateRequest"
+              }
+            }
+          },
+          "required": true,
+          "description": "Task creation request object containing details such as `pat_token`, `workspace_id`, `project_id`, `name`, `notes`, `followers`, `assignee`, and `due_on`."
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response - The task was created successfully in Asana."
+          },
+          "422": {
+            "description": "Validation Error - One or more parameters are invalid. The error details will be returned in the response."
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "TaskCreateRequest": {
+        "type": "object",
+        "description": "Request payload for creating a task in Asana. Includes the personal access token (PAT), workspace ID, project ID, task name, and other relevant details.",
+        "properties": {
+          "pat_token": {
+            "type": "string",
+            "title": "Pat Token",
+            "description": "The Personal Access Token (PAT) used for authenticating API requests to Asana.",
+            "default": "2/1208c2a2ab19a49bcd4e70b"
+          },
+          "workspace_id": {
+            "type": "string",
+            "title": "Workspace Id",
+            "description": "The ID of the workspace where the task will be created."
+          },
+          "project_id": {
+            "type": "string",
+            "title": "Project Id",
+            "description": "The ID of the project under which the task will be created."
+          },
+          "name": {
+            "type": "string",
+            "title": "Name",
+            "description": "The name of the task to be created."
+          },
+          "notes": {
+            "type": "string",
+            "title": "Notes",
+            "description": "Additional notes or details to be included in the task."
+          },
+          "followers": {
+            "type": "array",
+            "title": "Followers",
+            "description": "An array of user IDs who will be added as followers of the task.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "assignee": {
+            "type": "string",
+            "title": "Assignee",
+            "description": "The ID of the user to whom the task will be assigned."
+          },
+          "due_on": {
+            "type": "string",
+            "title": "Due On",
+            "description": "The due date of the task, in ISO 8601 format (YYYY-MM-DD)."
+          }
+        },
+        "required": [
+          "workspace_id",
+          "project_id",
+          "name",
+          "notes",
+          "followers",
+          "assignee",
+          "due_on"
+        ]
+      },
+      "HTTPValidationError": {
+        "type": "object",
+        "description": "A validation error response object returned when one or more input parameters fail validation.",
+        "properties": {
+          "detail": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            }
+          }
+        }
+      },
+      "ValidationError": {
+        "type": "object",
+        "description": "Details about a specific validation error.",
+        "properties": {
+          "loc": {
+            "type": "array",
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "title": "Location",
+            "description": "The location in the request where the validation error occurred (e.g., body, query parameter, etc.)."
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message",
+            "description": "A descriptive message explaining the validation error."
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type",
+            "description": "The type of validation error that occurred."
+          }
+        },
+        "required": ["loc", "msg", "type"]
+      }
+    }
+  }
+}
